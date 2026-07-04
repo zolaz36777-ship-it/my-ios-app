@@ -13,7 +13,9 @@ workflows:
           pod install
       - name: Build iOS Application
         script: |
-          xcodebuild -workspace habesha4habesha.xcworkspace -scheme PWA -configuration Debug -sdk iphoneos CODE_SIGNING_ALLOWED=NO OBJROOT=$PWD/build SYMROOT=$PWD/build
+          WORKSPACE_FILE=$(ls -d *.xcworkspace | head -n 1)
+          SCHEME_NAME=$(xcodebuild -list -workspace "$WORKSPACE_FILE" | grep -A 5 "Schemes:" | tail -n +2 | xargs | awk '{print $1}')
+          xcodebuild -workspace "$WORKSPACE_FILE" -scheme "$SCHEME_NAME" -configuration Debug -sdk iphoneos CODE_SIGNING_ALLOWED=NO OBJROOT=$PWD/build SYMROOT=$PWD/build
       - name: Package App Bundle into IPA
         script: |
           mkdir -p build/Payload
