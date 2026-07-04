@@ -22,4 +22,4 @@ workflows:
           cp -r build/Build/Products/Debug-iphoneos/*.app Payload/
           zip -r habesha_app.ipa Payload
     artifacts:
-      - src/*.ipa
+      - "*.ipa"
