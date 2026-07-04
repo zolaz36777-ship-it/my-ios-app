@@ -15,11 +15,11 @@ workflows:
         script: |
           WORKSPACE_FILE=$(ls -d *.xcworkspace | head -n 1)
           SCHEME_NAME=$(xcodebuild -list -workspace "$WORKSPACE_FILE" | grep -A 5 "Schemes:" | tail -n +2 | xargs | awk '{print $1}')
-          xcodebuild -workspace "$WORKSPACE_FILE" -scheme "$SCHEME_NAME" -configuration Debug -sdk iphoneos CODE_SIGNING_ALLOWED=NO OBJROOT=$PWD/build SYMROOT=$PWD/build
+          xcodebuild -workspace "$WORKSPACE_FILE" -scheme "$SCHEME_NAME" -configuration Debug -sdk iphoneos CODE_SIGNING_ALLOWED=NO
       - name: Package App Bundle into IPA
         script: |
-          mkdir -p build/Payload
-          cp -r build/Debug-iphoneos/*.app build/Payload/
-          cd build && zip -r habesha_app.ipa Payload
+          mkdir -p Payload
+          cp -r build/Build/Products/Debug-iphoneos/*.app Payload/
+          zip -r habesha_app.ipa Payload
     artifacts:
-      - src/build/*.ipa
+      - src/*.ipa
