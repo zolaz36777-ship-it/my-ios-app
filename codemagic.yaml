@@ -11,15 +11,15 @@ workflows:
       - name: Install CocoaPods dependencies
         script: |
           pod install
-      - name: Build iOS Application
+      - name: Build iOS Application for Simulator
         script: |
           WORKSPACE_FILE=$(ls -d *.xcworkspace | head -n 1)
           SCHEME_NAME=$(xcodebuild -list -workspace "$WORKSPACE_FILE" | grep -A 5 "Schemes:" | tail -n +2 | xargs | awk '{print $1}')
-          xcodebuild -workspace "$WORKSPACE_FILE" -scheme "$SCHEME_NAME" -configuration Debug -sdk iphoneos CODE_SIGNING_ALLOWED=NO -derivedDataPath build_output
-      - name: Package App Bundle into IPA
+          xcodebuild -workspace "$WORKSPACE_FILE" -scheme "$SCHEME_NAME" -configuration Debug -sdk iphonesimulator EXCLUDED_ARCHS="arm64"
+      - name: Package Simulator App Bundle
         script: |
           mkdir -p Payload
-          cp -r build_output/Build/Products/Debug-iphoneos/*.app Payload/
+          cp -r build/Build/Products/Debug-iphonesimulator/*.app Payload/ 2>/dev/null || cp -r ~/Library/Developer/Xcode/DerivedData/*/Build/Products/Debug-iphonesimulator/*.app Payload/
           zip -r habesha_app.ipa Payload
           mv habesha_app.ipa $CM_BUILD_DIR/
     artifacts:
