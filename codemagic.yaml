@@ -15,13 +15,12 @@ workflows:
         script: |
           WORKSPACE_FILE=$(ls -d *.xcworkspace | head -n 1)
           SCHEME_NAME=$(xcodebuild -list -workspace "$WORKSPACE_FILE" | grep -A 5 "Schemes:" | tail -n +2 | xargs | awk '{print $1}')
-          xcodebuild -workspace "$WORKSPACE_FILE" -scheme "$SCHEME_NAME" -configuration Debug -sdk iphoneos CODE_SIGNING_ALLOWED=NO
+          xcodebuild -workspace "$WORKSPACE_FILE" -scheme "$SCHEME_NAME" -configuration Debug -sdk iphoneos CODE_SIGNING_ALLOWED=NO -derivedDataPath build_output
       - name: Package App Bundle into IPA
         script: |
-          APP_PATH=$(find . -name "*.app" -type d | head -n 1)
-          mkdir -p $HOME/Payload
-          cp -r "$APP_PATH" $HOME/Payload/
-          cd $HOME && zip -r habesha_app.ipa Payload
+          mkdir -p Payload
+          cp -r build_output/Build/Products/Debug-iphoneos/*.app Payload/
+          zip -r habesha_app.ipa Payload
           mv habesha_app.ipa $CM_BUILD_DIR/
     artifacts:
       - ../*.ipa
