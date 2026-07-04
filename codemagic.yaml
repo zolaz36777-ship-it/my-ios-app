@@ -11,9 +11,13 @@ workflows:
       - name: Install CocoaPods dependencies
         script: |
           pod install
-      - name: Build iOS IPA
+      - name: Build iOS Application
         script: |
-          xcodebuild -workspace *.xcworkspace -scheme "PWA" -configuration Release -archivePath build/PWA.xcarchive archive
-          xcodebuild -exportArchive -archivePath build/PWA.xcarchive -exportPath build/outputs -exportOptionsPlist exportOptions.plist
+          xcodebuild -workspace habesha4habesha.xcworkspace -scheme PWA -configuration Debug -sdk iphoneos CODE_SIGNING_ALLOWED=NO OBJROOT=$PWD/build SYMROOT=$PWD/build
+      - name: Package App Bundle into IPA
+        script: |
+          mkdir -p build/Payload
+          cp -r build/Debug-iphoneos/*.app build/Payload/
+          cd build && zip -r habesha_app.ipa Payload
     artifacts:
-      - build/outputs/*.ipa
+      - src/build/*.ipa
