@@ -18,8 +18,9 @@ workflows:
           xcodebuild -workspace "$WORKSPACE_FILE" -scheme "$SCHEME_NAME" -configuration Debug -sdk iphoneos CODE_SIGNING_ALLOWED=NO
       - name: Package App Bundle into IPA
         script: |
+          cd build/Build/Products/Debug-iphoneos
           mkdir -p Payload
-          cp -r build/Build/Products/Debug-iphoneos/*.app Payload/
-          zip -r habesha_app.ipa Payload
+          cp -r *.app Payload/
+          zip -r ../../../../habesha_app.ipa Payload
     artifacts:
       - "*.ipa"
